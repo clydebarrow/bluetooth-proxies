@@ -1,4 +1,6 @@
 # Instructions on opening and wiring for flashing on https://blakadder.com/gl-s10
+# This config is for the 1.0 version of the GL-S10 which has different pins for the ethernet
+# interface.
 
 substitutions:
   name: gl-s10-bt-proxy
@@ -9,8 +11,8 @@ esphome:
   friendly_name: ${friendly_name}
   name_add_mac_suffix: true
   project:
-    name: esphome.bluetooth-proxy
-    version: "1.0"
+    name: esphome.bluetooth-proxy.gls10-1-0
+    version: "1.1"
 # turn on Power LED when esphome boots
   on_boot:
     then:
@@ -21,16 +23,6 @@ esp32:
   framework:
     type: esp-idf
 
-# Configuration fo V2.3 hardware revision
-# ethernet:
-#   type: IP101
-#   mdc_pin: GPIO23
-#   mdio_pin: GPIO18
-#   clk_mode: GPIO0_IN
-#   phy_addr: 1
-#   power_pin: GPIO5
-
-# Comment the above and use this instead for V1.0 revision of the hardware
 ethernet:
   type: LAN8720
   mdc_pin: GPIO23
@@ -45,7 +37,7 @@ logger:
 ota:
 
 dashboard_import:
-  package_import_url: github://esphome/bluetooth-proxies/gl-s10-v1.0.yaml@main
+  package_import_url: github://clydebarrow/bluetooth-proxies/gl-s10-v1.0.yaml@main
 
 esp32_ble_tracker:
   scan_parameters:
@@ -53,11 +45,12 @@ esp32_ble_tracker:
     window: 1100ms
     active: true
 # Bluetooth LED blinks when receiving Bluetooth advertising
-  on_ble_advertise:
-    then:
-      - output.turn_on: bluetooth_led
-      - delay: 0.5s
-      - output.turn_off: bluetooth_led
+# Disabled here to avoid having to decode packets. Uncomment to enable.
+#  on_ble_advertise:
+#    then:
+#      - output.turn_on: bluetooth_led
+#      - delay: 0.5s
+#      - output.turn_off: bluetooth_led
 
 bluetooth_proxy:
   active: true
@@ -95,8 +88,8 @@ output:
     inverted: true
     id: bluetooth_led
 
-# since these pins are broken out inside and labeled as I2C pins they're configured here
-i2c:
-  sda: 15
-  scl: 13
-  scan: true
+# i2c not used just for a BT proxy, but these are the pins
+#i2c:
+#  sda: 15
+#  scl: 13
+#  scan: true
